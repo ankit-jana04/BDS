@@ -1,0 +1,124 @@
+Certainly! Below are the step-by-step terminal commands to perform the Hive installation and configurations on an Ubuntu system. Make sure you have Java and Hadoop already installed on your machine before proceeding with the Hive installation.
+
+ Step-by-Step Hive Installation Commands
+
+1. Start Hadoop Services:
+   
+---   /usr/local/hadoop/sbin/start-all.sh
+   
+
+2. Download and Extract Hive:
+   Navigate to the local directory where the Hive tar file is located and extract it:
+   
+---     cd /usr/local/
+---     sudo tar xvzf /home/hduser/Downloads/apache-hive-3.1.2-bin.tar.gz
+---     sudo mv apache-hive-3.1.2-bin/ hive
+---     sudo chmod 777 hive
+   
+
+3. Update  Configuration:
+   Open the `.rc` file to add Hive environment variables:
+   
+---     sudo nano ~/.rc
+   
+   Add the following lines at the end of the file:
+   
+---     export HIVE_HOME=/usr/local/hive
+---     export PATH=$PATH:$HIVE_HOME/bin
+   
+   Save and exit the editor. Then, refresh the  configuration:
+   
+---     source ~/.rc
+   
+
+4. Add Hadoop Home in Hive Configuration:
+   Change to the Hive bin directory and update `hive-config.sh`:
+   
+---     cd /usr/local/hive/bin
+---     sudo nano hive-config.sh
+   
+   Add the following line:
+   
+---     export HADOOP_HOME=/usr/local/hadoop
+   
+
+5. Create Required Directories in HDFS:
+   Run the following commands to create directories for Hive:
+   
+---     hdfs dfs -mkdir /tmp
+---     hdfs dfs -chmod g+w /tmp
+---     hdfs dfs -chmod o+w /tmp
+---     hdfs dfs -mkdir -p /user/hive/warehouse
+---     hdfs dfs -chmod g+w /user/hive/warehouse
+---     hdfs dfs -chmod 777 /tmp
+---     hdfs dfs -chown -R hduser:supergroup /user/hive/warehouse
+---     hdfs dfs -chmod -R 777 /user/hive/warehouse
+---     hdfs dfs -ls /
+   
+
+6. Initialize Hive Schema:
+   Change to the Hive bin directory:
+   
+---     cd /usr/local/hive/bin
+---     sudo ./schematool -initSchema -dbType derby
+   
+
+7. Resolve Compatibility Error (if encountered):
+   In case of a compatibility error with Guava:
+   
+---     sudo rm lib/guava-19.0.jar
+---     sudo cp $HADOOP_HOME/share/hadoop/common/lib/guava-27.0-jre.jar /usr/local/hive/lib/
+   
+
+   Run the schema initialization command again:
+   
+---     cd /usr/local/hive/bin
+---     sudo ./schematool -initSchema -dbType derby
+   
+
+   If you encounter the `FUNCTION 'NUCLEUS_ASCII' error`, clear the existing metastore:
+   
+---     sudo rm -rf metastore_db
+   
+
+8. Start Hive:
+   Start the Hive shell:
+   
+---     cd /usr/local/hive/bin
+---     sudo ./hive
+   
+
+9. Create a Database and Table:
+   In the Hive shell, run the following commands:
+---     sql
+---     CREATE DATABASE company;
+---     USE company;
+---     CREATE TABLE employees (id INT, name STRING, country STRING, department STRING, salary INT) ROW FORMAT DELIMITED FIELDS TERMINATED BY ' ';
+   
+
+10. Load Data into the Table:
+    Create a file with employee data:
+    
+---      sudo nano employees.txt
+    
+    Enter a few rows of data like this:
+    
+    1 John India HR 50000
+    2 Emma USA Sales 60000
+    3 Liam Canada IT 70000
+    
+    Save and exit the editor.
+
+    Load the data into the `employees` table:
+---      sql
+---      LOAD DATA LOCAL INPATH './employees.txt' INTO TABLE employees;
+    
+
+11. Reading the Table Data:
+    Finally, read the data from the employees table:
+---      sql
+ ---     SELECT * FROM employees;
+    
+
+ Conclusion
+You have successfully installed Apache Hive, configured it, and created a table with some data. Ensure that every command is executed with the appropriate permissions, and you have the necessary configurations for Hadoop in place.

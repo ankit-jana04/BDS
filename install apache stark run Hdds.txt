@@ -1,0 +1,149 @@
+To install, configure, and run Apache Spark on Ubuntu, follow the steps outlined below. This guide will walk you through updating packages, installing required software, downloading Spark, setting environment variables, and creating/transformed RDDs using PySpark.
+
+ Step-by-Step Instructions
+
+ Step 1: Update System Packages
+First, open a terminal and run the following command to update and upgrade the system packages:
+
+---   sudo apt update && sudo apt upgrade -y
+
+
+ Step 2: Install Java (OpenJDK 11)
+Apache Spark requires Java. Install OpenJDK 11 with:
+
+---   sudo apt install openjdk-11-jdk -y
+
+Verify the installation:
+
+---   java -version
+
+Expected output should include something like:
+
+---   openjdk version "11.0.x" ...
+
+
+ Step 3: Install Scala
+Spark requires Scala for execution. Install Scala using:
+
+---   sudo apt install scala -y
+
+Verify the installation:
+
+---   scala -version
+
+
+ Step 4: Download and Install Apache Spark
+Navigate to the `/opt` directory:
+
+---   cd /opt
+
+Download the latest Apache Spark (3.x) release. Make sure to check for the latest version or adjust if necessary:
+
+---   sudo wget https://downloads.apache.org/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz
+
+Extract the archive:
+
+---   sudo tar -xvzf spark-3.5.5-bin-hadoop3.tgz
+
+Rename the extracted folder:
+
+---   sudo mv spark-3.5.5-bin-hadoop3 spark
+
+
+ Step 5: Set Up Environment Variables
+Edit the `.rc` file:
+
+---   nano ~/.rc
+
+Add the following lines at the end of the file:
+
+export SPARK_HOME=/opt/spark
+export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
+export PYSPARK_PYTHON=/usr/bin/python3
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+
+Save and exit (Ctrl + S & Ctrl + X). 
+
+Apply the changes:
+
+---   source ~/.rc
+
+
+ Step 6: Start Spark
+Start the Spark Master and Worker:
+
+---   start-master.sh
+
+Find the Spark Master URL in the output (e.g., `spark://yourhostname:7077`). 
+
+Next, start a worker:
+
+---   start-worker.sh spark://yourhostname:7077
+
+Verify Spark is running by going to Spark Master Web UI:
+Open your browser and navigate to: 
+
+http://localhost:8080
+
+
+ Step 7: Start Spark Shell
+Start the interactive Spark shell:
+
+---   spark-shell
+
+To verify the installation, run:
+scala
+---   sc.appName
+
+If everything is working correctly, you should see something like:
+
+---   res0: String = Spark shell
+
+
+ Creating and Transforming RDDs
+You need to exit the Spark shell and start the PySpark shell separately for Python commands.
+
+**Exit the Spark shell:**
+---   scala
+---   :quit
+
+
+**Step 1: Launch PySpark Shell**
+From your terminal, run:
+
+---   pyspark
+
+If it's correctly installed, your prompt will change to:
+
+ This is the PySpark (Python) shell.
+
+
+**Step 2: Create an RDD**
+Create an RDD from a Python list:
+python
+
+---   rdd = sc.parallelize([1, 2, 3, 4, 5])
+---   print(rdd.collect())   Output: [1, 2, 3, 4, 5]
+
+
+**Step 3: Apply Transformations**
+Apply the `map()` transformation to square each number:
+python
+
+---   squared_rdd = rdd.map(lambda x: x ** 2)
+---   print(squared_rdd.collect())   Output: [1, 4, 9, 16, 25]
+
+Apply a `filter()` transformation to keep even numbers:
+python
+
+---   even_rdd = rdd.filter(lambda x: x % 2 == 0)
+---   print(even_rdd.collect())   Output: [2, 4]
+
+
+**Step 4: Perform Actions**
+Use the `reduce()` action to sum all elements:
+python
+
+---   sum_rdd = rdd.reduce(lambda a, b: a + b)
+---   print(sum_rdd)   Output: 15
+

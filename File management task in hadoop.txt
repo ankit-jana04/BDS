@@ -1,0 +1,83 @@
+Here's a comprehensive breakdown of the steps and corresponding Ubuntu terminal commands needed to perform file management tasks in the Hadoop File System (HDFS) as outlined in your requirements:
+
+ Step-by-Step Commands
+
+1. Login as Hadoop User
+   
+ ---  su hduser
+   
+
+2. Start Hadoop Services and Verify
+   
+   ssh localhost
+   /usr/local/hadoop/sbin/start-all.sh
+---   jps
+   
+
+3. Check if Hadoop is Installed via Terminal
+   
+---   hadoop version
+   
+
+4. Check if Hadoop is Installed via Browser
+   Open your web browser and visit: in browser 
+   
+---   http://localhost:9870
+   
+
+5. Create a Folder in Local File System
+   
+   hduser /usr/local
+  --- sudo mkdir -p /usr/local/sds_a016
+   ls
+   
+
+6. Assign Full Privileges to the New Folder
+   
+---   sudo chmod -R 777 /usr/local/sds_a016
+   ls
+   
+
+7. Create a File in the New Folder with Specified Text
+   
+---   cd /usr/local/sds_a016
+---   sudo nano nmimstext.txt
+   
+
+   *Inside the nano editor, enter the desired text, save it (CTRL + O), and exit (CTRL + X).*
+
+   Verify the file is created:
+   
+   ls
+ ---  cat nmimstext.txt
+   
+
+8. Create a Folder Named "SDS" in HDFS Root Folder
+   
+---   cd /home/udit
+---   hdfs dfs -mkdir /SDS
+-----   hdfs dfs -ls /
+   
+
+9. Move the File `nmimstext.txt` to the `SDS` Folder in HDFS and Verify
+   
+---   hdfs dfs -copyFromLocal /usr/local/sds_a016/nmimstext.txt /SDS
+---   hdfs dfs -ls /SDS
+   
+
+10. Read the Contents of the File from HDFS Location
+    
+    cd /home/udit
+---    hdfs dfs -cat /SDS/nmimstext.txt
+    
+
+ Conclusion
+
+The practical exercise conducted highlights core aspects of file management in Hadoop's HDFS. The commands performed included:
+
+- Directory Creation: Utilizing `hdfs dfs -mkdir` for creating directories in HDFS.
+- File Upload: Employing `hdfs dfs -copyFromLocal` to transfer files from the local filesystem to HDFS.
+- File Retrieval: Using `hdfs dfs -cat` to read file contents directly from HDFS.
+- Permissions Management: Modifying directory permissions with `chmod`.
+
+Through these tasks, understanding the interaction with HDFS was achieved, showcasing its differences from traditional file systems and its role in big data storage and analytics. Overall, this experience is instrumental in getting hands-on experience with Hadoop operations, which are critical for big data management.

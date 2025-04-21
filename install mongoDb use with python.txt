@@ -1,0 +1,133 @@
+To set up a similar environment on Ubuntu for using MongoDB and Python, you'll need to follow a series of installation and configuration steps. Below is a detailed guide:
+
+ Step 1: Install MongoDB
+
+1. Update your package list:
+   
+---     sudo apt update
+   
+
+2. Install MongoDB:
+   To install MongoDB, use the following commands:
+   
+---      sudo apt install -y mongodb
+   
+
+3. Start MongoDB:
+   
+---      sudo systemctl start mongodb
+   
+
+4. Enable MongoDB to start on boot:
+   
+---      sudo systemctl enable mongodb
+   
+
+ Step 2: Launch MongoDB
+
+5. Open MongoDB Shell:
+   
+---      mongo
+   
+
+ Working with MongoDB
+
+Now that MongoDB has been installed and launched, you can perform various operations:
+
+- Show list of databases:
+  javascript
+
+---     show dbs
+  
+
+- Create or switch to a database:
+  javascript
+
+---     use udit
+  
+
+- Show existing collections:
+  javascript
+
+---     show collections
+  
+
+- Create a collection:
+  javascript
+
+---     db.createCollection("subjects")
+  
+
+- Insert documents into the collection:
+  javascript
+
+---     db.subjects.insertOne({"name": "bda"})
+---     db.subjects.insertOne({"name": "mn"})
+---     db.subjects.insertOne({"name": "ip"})
+---     db.subjects.insertOne({"name": "msa"})
+  
+
+- Display all records in the collection:
+  javascript
+
+---     db.subjects.find()
+  
+
+- Display a specific record in the collection:
+  javascript
+
+---     db.subjects.find({"name": "bda"})
+  
+
+ Step 3: Using Python with MongoDB
+
+1. Install Python and Pip:
+   If you don't have Python installed, you can install it by running:
+   
+---      sudo apt install python3 python3-pip
+   
+
+2. Install PyMongo:
+   Use pip to install the PyMongo library:
+   
+---      python3 -m pip install pymongo
+   
+
+3. Create a Python script to interact with MongoDB:
+   
+   Open a new Python file, e.g., `mongodb_example.py` and add the following code:
+
+   python
+
+---      from pymongo import MongoClient
+
+   # Create a client object to communicate with the running MongoDB instance
+
+---      myclient = MongoClient(host="localhost", port=27017)
+
+   # Check database list
+
+---      print(myclient.list_database_names())
+
+   # Define which database you want to use
+
+---      db = myclient["udit"]  # Switch to the "udit" database
+
+   # Create a collection
+
+---      col = db["subjects1"]
+
+   # Create a dictionary and insert into collection
+
+---      data = {"name": "ds", "sem": "1"}
+---      col.insert_one(data)
+
+   # Print all databases names
+
+---      print(myclient.list_database_names())
+   
+
+4. Run the Python script:
+   
+---      python3 mongodb_example.py
+   

@@ -1,0 +1,156 @@
+Here is a step-by-step guide with the necessary Ubuntu commands to install, run, and configure Apache Solr according to the instructions you've provided:
+
+ 1. Install Apache Solr
+
+# Prerequisites: Install Java
+- Check if Java is installed:
+  
+---    java -version
+  
+
+- If Java is not installed, install OpenJDK (version 17):
+  
+---     sudo apt update
+---     sudo apt install openjdk-17-jdk -y
+  
+
+- Verify the Java installation:
+  
+---     java -version
+  
+
+# Download Apache Solr
+- Download Apache Solr (replace version with the latest if necessary):
+  
+---     wget https://downloads.apache.org/lucene/solr/9.5.0/solr-9.5.0.tgz
+  
+
+# Verify the File Integrity
+- Check the file size:
+  
+---     ls -lh solr-9.5.0.tgz
+  
+
+# Extract and Install Solr
+- Extract the downloaded file:
+  
+---     tar xzf solr-9.5.0.tgz
+  
+
+- Navigate to the extracted directory:
+  
+---     cd solr-9.5.0
+  
+
+- Install Solr as a system service:
+  
+---     sudo  bin/install_solr_service.sh ~/solr-9.5.0.tgz
+  
+
+ 2. Run Apache Solr
+
+- Start the Solr service:
+  
+---     sudo systemctl start solr
+  
+
+- Check if Solr is running:
+  
+---     sudo systemctl status solr
+  
+
+- To stop Solr:
+  
+---     sudo systemctl stop solr
+  
+
+- To restart Solr:
+  
+---     sudo systemctl restart solr
+  
+
+- Verify Solr is running (open this in your browser):
+  
+---     http://localhost:8983/solr
+  
+
+ 3. Configure Apache Solr
+
+# Create a Collection
+1. Switch to the Solr user:
+   
+---      sudo su - solr
+   
+
+2. Create a collection:
+   
+---      /opt/solr/bin/solr create -c mycollection -n _default
+   
+   (or replace `mycollection` with whatever you want, e.g., `mydreams`).
+
+# Change Solr Configuration
+
+1. Edit Common Settings (Global config):
+   
+---      sudo nano /etc/default/solr.in.sh
+   
+   - Change Port:
+     
+     SOLR_PORT=8984
+     
+   - Set Memory:
+     
+     SOLR_HEAP="2g"
+     
+
+2. Enable Basic Authentication:
+   - In the same `/etc/default/solr.in.sh`, add:
+     
+---        SOLR_AUTH_TYPE="basic"
+---        SOLR_AUTHENTICATION_OPTS="-Dbasicauth=admin:admin123"
+     
+   - (Replace `admin:admin123` with your preferred username and password).
+
+3. Restart Solr to apply changes:
+   
+---      sudo systemctl restart solr
+   
+
+ 4. Indexing Data
+- Add a Sample Document:
+  
+   curl -X POST -H "Content-Type: application/json" --data ' 
+  { 
+    "id": "1", 
+    "name": "Sample Document" 
+  }' http://localhost:8983/solr/mydreams/update?commit=true
+  
+
+ 5. Searching Data
+- From Browser:
+  
+---     http://localhost:8983/solr/mydreams/select?q=*
+  
+
+- Using curl:
+  
+---     curl "http://localhost:8983/solr/mydreams/select?q=*"
+  
+
+ 6. Monitoring Logs
+- Tail Live Logs:
+  
+---     tail -f /var/solr/logs/solr.log
+  
+
+- Check service status:
+  
+---     sudo systemctl status solr
+  
+
+ Next Steps
+- Set up SolrCloud for distributed search.
+- Integrate Solr with Elasticsearch or Kibana.
+- Use Solr with CMS platforms like Drupal, Magento, or WordPress.
+
+This is a comprehensive guide to getting Apache Solr up and running on Ubuntu. Make sure to replace any version numbers with the latest versions available at the time of your installation.

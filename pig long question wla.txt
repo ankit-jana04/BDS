@@ -1,0 +1,176 @@
+Below are the terminal commands and steps necessary to install, configure, and run Apache Pig on Ubuntu. Instructions are provided in detail to ensure a smooth setup and execution of Pig Latin scripts.
+
+ 1. Start Hadoop Services
+
+First, start the Hadoop services and verify that all services are running correctly:
+
+
+--- /usr/local/hadoop/sbin/start-all.sh
+---  jps  # This command displays the status of Hadoop daemons running
+
+
+ 2. Download and Extract Pig
+
+Next, download the Apache Pig package:
+
+
+---  wget https://downloads.apache.org/pig/pig-0.17.0/pig-0.17.0.tar.gz
+
+
+Extract the downloaded tar file and move it to the `/usr/local/` directory:
+
+
+---  sudo tar xzvf pig-0.17.0.tar.gz -C /usr/local/
+---  sudo mv /usr/local/pig-0.17.0 /usr/local/pig
+
+
+ 3. Configure Environment Variables
+
+Add Pig environment variables in the `.rc` file:
+
+
+---  sudo nano ~/.rc
+
+
+Add the following lines at the end of the file:
+
+
+---  export PIG_HOME=/usr/local/pig
+---  export PATH=$PATH:$PIG_HOME/bin
+---  export PIG_CLASSPATH=$HADOOP_HOME/conf
+
+
+Save and exit (`Ctrl + X`, followed by `Y` and `Enter`). Then, apply the changes:
+
+
+---  source ~/.rc
+
+
+Check the Pig version to verify the installation:
+
+
+---  pig --version
+
+
+ 4. Create a Database File
+
+Create a simple text file for experimentation:
+
+
+---  sudo nano products.txt
+
+
+Enter the following lines (without spaces):
+
+
+1,phone,45,mumbai,2023
+2,laptop,44,pune,2022
+
+
+Save and exit the file.
+
+ 5. Run Pig in Local Mode
+
+To run Pig in local mode, execute the following commands:
+
+
+---  pig -x local
+
+
+In the Pig shell, load the `products.txt` file:
+
+---  pig
+---  products = LOAD 'products.txt' USING PigStorage(','); 
+---  DUMP products;
+
+
+ 6. Move File to HDFS and Run in HDFS Mode
+
+First, move the `products.txt` file to HDFS:
+
+
+---  hdfs dfs -put /path/to/products.txt /
+
+
+Next, start Pig again (this time in the default mode, which is HDFS mode):
+
+
+---  pig
+
+
+Load the data from HDFS:
+
+---  pig
+--- products = LOAD 'hdfs://localhost:9000/products.txt' USING PigStorage(','); 
+---  DUMP products;
+
+
+ 7. Use DISTINCT Operator
+
+Create another file named `m3.txt` with some appropriate data:
+
+
+--- sudo nano m3.txt
+ 
+
+Add sample records:
+
+
+1,1,6
+2,2,7
+3,3,6
+4,4,8
+
+
+Use the DISTINCT operator in Pig:
+
+--- pig
+--- m3 = LOAD 'm3.txt' USING PigStorage(',') AS (a1:int, a2:int, a3:int);
+---  distinct_m3 = DISTINCT m3;
+--- DUMP distinct_m3;
+ 
+
+ 8. Use FILTER Operator
+
+Filter the records where a3 equals 6:
+
+--- pig
+--- result_f = FILTER m3 BY a3 == 6;
+---  DUMP result_f;
+
+
+ 9. Use ORDER BY Operator
+
+Sort the records by the first field (a1):
+
+---  pig
+---  result_ob = ORDER m3 BY a1 ASC;
+---  DUMP result_ob;
+
+
+ 10. Use UNION Operator
+
+Create another file named `m1.txt`:
+
+
+--- sudo nano m1.txt
+ 
+
+Add sample records (similar or different for the purpose of UNION):
+
+
+5,5,9
+6,6,10
+
+
+Now, use the UNION operator in Pig:
+
+--- pig
+---  m1 = LOAD 'm1.txt' USING PigStorage(',') AS (a1:int, a2:int, a3:int);
+--- union_results = UNION m3, m1;
+--- DUMP union_results;
+
+
+ Conclusion
+
+You have now completed the installation and basic use of Apache Pig. You executed various Pig Latin commands to load, filter, sort, and join data effectively. Make sure to adjust file paths and permissions as needed for your specific setup.

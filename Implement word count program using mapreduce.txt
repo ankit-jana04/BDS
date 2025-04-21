@@ -1,0 +1,38 @@
+# Step 1: Login to the Hadoop user if not already logged in
+--- su hduser
+
+# Step 2: Start Hadoop services
+---  ssh localhost
+
+---  /usr/local/hadoop/sbin/start-all.sh
+
+# Step 3: Access the Hadoop web interface
+# Open your web browser and navigate to:
+---  http://localhost:9870
+
+# Step 4: Create a text file with some words on the local filesystem
+---  sudo nano /home/hduser/bda.txt
+
+# Write 2-3 sentences of your own, making sure some words appear repeatedly.
+# For example:
+# This is a sample text file. This file is used for testing word count. Count the words carefully in this file.
+
+# Save and exit the nano editor (Press CTRL + X, then Y, then Enter).
+
+# Step 5: Change the ownership of the bda.txt file to hduser:hadoop
+---  sudo chown hduser:hadoop /home/hduser/bda.txt
+
+# Step 6: Move bda.txt file to HDFS
+---  hdfs dfs -put /home/hduser/bda.txt /
+
+# Step 7: Run MapReduce job for word count
+ ---  hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.3.jar wordcount /bda.txt /output
+
+# Step 8: Check the output at the default output location
+---  hdfs dfs -head /output/part-r-00000
+
+# Step 9: To get the output in a .txt file in HDFS
+---  hdfs dfs -mv /output/part-r-00000 /output/opt.txt
+
+# Step 10: To check the file system in HDFS and see your new output file
+---  hdfs dfs -ls /

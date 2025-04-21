@@ -1,0 +1,153 @@
+Below are the detailed steps and commands to install, configure, and run Apache Storm on an Ubuntu machine, based on your specifications.
+
+ Prerequisites
+Ensure your system has the following software installed:
+
+1. Java (JDK 8 or later)
+2. ZooKeeper (required for Storm)
+3. Python (for Storm UI)
+4. wget/unzip (to download Storm)
+
+ 1. Install Java
+
+Step 1: Update package lists and install OpenJDK
+
+---  sudo apt update
+---  sudo apt install -y openjdk-17-jdk
+
+
+Verify the installation:
+
+---  java -version
+
+
+ 2. Install ZooKeeper
+
+---  sudo apt install -y zookeeperd
+
+
+Start the ZooKeeper service:
+
+---  sudo systemctl start zookeeper
+---  sudo systemctl enable zookeeper
+
+
+Check the status of the ZooKeeper service:
+
+---  sudo systemctl status zookeeper
+
+
+Verify that ZooKeeper is running:
+
+---  echo "ruok" | nc localhost 2181
+
+You should see `imok` if ZooKeeper is running correctly.
+
+ 3. Download and Install Apache Storm
+Navigate to the /opt directory and download the Apache Storm tar.gz file:
+
+---  cd /opt
+---  sudo wget https://downloads.apache.org/storm/apache-storm-2.8.0/apache-storm-2.8.0.tar.gz
+
+
+Verify SHA512 for download (optional, for security):
+
+---  sudo wget https://downloads.apache.org/storm/apache-storm-2.8.0/apache-storm-2.8.0.tar.gz.sha512
+---  sha512sum -c apache-storm-2.8.0.tar.gz.sha512
+
+
+Extract the archive:
+
+---  sudo tar -xvzf apache-storm-2.8.0.tar.gz
+
+
+Rename the directory:
+
+---  sudo mv apache-storm-2.8.0 storm
+
+
+Set permissions:
+
+---  sudo chown -R $USER:$USER /opt/storm
+
+
+ 4. Configure Apache Storm
+Edit the `storm.yaml` configuration file:
+
+---  nano /opt/storm/conf/storm.yaml
+
+
+Add or update the following lines:
+yaml
+
+storm.zookeeper.servers:
+  - "localhost"
+nimbus.seeds: ["localhost"]
+supervisor.slots.ports:
+  - 6700
+  - 6701
+  - 6702
+  - 6703
+ui.port: 8080
+
+Save and exit: (Ctrl + X, then Y, then Enter)
+
+Create the local directory for Storm:
+
+---  sudo mkdir /opt/storm/tmp
+
+
+ 5. Start Apache Storm Services
+Open multiple terminal tabs or use tmux/screen to run the following components in parallel:
+
+---  Run Nimbus (Master node):
+
+---  cd /opt/storm
+---  bin/storm nimbus
+
+
+Run Supervisor (Worker node):
+
+---  cd /opt/storm
+---  bin/storm supervisor
+
+
+Run Storm UI (Web interface):
+
+---  cd /opt/storm
+---  bin/storm ui
+
+
+ 6. Access the Storm UI
+Now, you can visit the following URL to view the Storm UI:
+
+---  http://localhost:8080
+
+
+ 7. Submit a Sample Topology
+Submit the sample ExclamationTopology:
+
+---  cd /opt/storm
+---  bin/storm jar examples/storm-starter/storm-starter-topologies-*.jar org.apache.storm.starter.ExclamationTopology exclamation-topology
+
+
+ After Submission
+Check logs to confirm it’s running properly and look for your topology in the UI:
+
+---  tail -f /opt/storm/logs/*
+
+Visit the Storm UI (`http://localhost:8080`) to see the status of your submitted topology.
+
+
+
+
+
+
+ Optional: Kill the Topology Later
+If you want to stop it:
+
+---  cd /opt/storm
+---  bin/storm kill exclamation-topology
+
+
+These steps should install, configure, and run Apache Storm on your Ubuntu system successfully.

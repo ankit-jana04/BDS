@@ -1,0 +1,132 @@
+Certainly! Below is a comprehensive guide that outlines the steps, commands, and the necessary actions to implement bucketing using Hive in Ubuntu.
+
+ Step-by-Step Instructions for Implementing Bucketing using Hive
+
+1. Open Terminal and Start Hive
+   To access Hive, you'll need to open your terminal. If Hive is installed, you can start it by using:
+   
+---     sudo ./hive
+   
+
+2. Create a Database
+   After entering the Hive shell, create a database named `show_bucket`:
+---     
+---     create database show_bucket;
+   
+
+3. Show Databases
+   To confirm that the database was created:
+---     
+---     show databases;
+   
+
+4. Use the Created Database
+   Switch to the newly created database `show_bucket`:
+---     
+---     use show_bucket;
+   
+
+5. Create a Table
+   Now, create a table `emp_demo` with appropriate columns:
+---     
+---     create table emp_demo (id int, name string, salary int) 
+---     row format delimited 
+---     fields terminated by ',';
+   
+
+6. Show Tables
+   Verify that the table has been created successfully:
+---     
+---     show tables;
+   
+
+7. Create the Data File
+   You will need a data file named `emp_details.txt`. To create it, use:
+   
+---     sudo nano emp_details.txt
+   
+   Inside the file, add the following data:
+   
+   1,Harsh,95000
+   2,Ramdas,85000
+   3,Omkar,90000
+   4,Shubham,80000
+   5,Kaushal,75000
+   
+
+   Save and close the file (in Nano, you can do this by pressing `CTRL + X`, then `Y`, followed by `Enter`).
+
+8. Check Files
+   List the files in your working directory to ensure the `emp_details.txt` is present:
+   
+---     ls
+   
+
+9. Load Data into Table
+   Go back to the Hive shell to load the data into the `emp_demo` table:
+   
+---     sudo ./hive
+---     use show_bucket;
+---     load data local inpath 'emp_details.txt' into table emp_demo;
+   
+
+10. Verify Table Schema
+    To check the schema and confirm that data has been loaded:
+    
+---      DESCRIBE emp_demo;
+    
+
+11. Enable Bucketing
+    Set the property for bucketing:
+    
+---      set hive.enforce.bucketing = true;
+    
+
+12. Create a Bucketed Table
+    Create a new table `emp_bucket` for bucketing:
+    
+---      create table emp_bucket (id int, name string, salary int) 
+---      clustered by (id) into 4 buckets 
+---      row format delimited 
+---      fields terminated by ',';
+    
+
+13. Insert Data into Bucketed Table
+    Insert data from the original `emp_demo` table into the `emp_bucket`:
+    
+---      insert overwrite table emp_bucket select * from emp_demo;
+    
+
+14. Verify Bucketed Table Output
+    Check if the data has been properly inserted and view the contents:
+    
+---      hdfs dfs -ls /user/hive/warehouse/show_bucket.db/emp_bucket
+    
+
+15. Drop All Tables and Database
+    To clean up after your operations, drop the database and all tables:
+    
+---      DROP DATABASE IF EXISTS show_bucket CASCADE;
+    
+
+16. Show Remaining Databases
+    Verify that the database is dropped:
+    
+---      show databases;
+    
+
+17. Delete All Files in HDFS
+    Finally, delete any files created in HDFS during this session:
+    
+---      hdfs dfs -rm -r /user/hive/warehouse/show_bucket.db
+    
+
+18. Delete Local Files
+    You can also clean up local files created during this session:
+    
+---      cd /usr/local
+---      sudo rm -rf sds_a016
+    
+
+ Conclusion
+Following these steps will allow you to implement bucketing using Hive effectively. Be sure to modify paths and file names according to your project-specific requirements. This guide is structured to work in a terminal on an Ubuntu system with Hive installed.

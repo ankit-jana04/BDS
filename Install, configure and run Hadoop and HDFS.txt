@@ -1,0 +1,194 @@
+To install, configure, and run Hadoop and HDFS on an Ubuntu machine, follow these steps. This guide assumes you have basic knowledge of using the Ubuntu terminal and that you have Java installed on your system. If you haven’t installed Java, you’ll need to install it first since Hadoop requires Java to run.
+
+ Step 1: Install Java
+
+1. Open the terminal and install Java Development Kit (JDK):
+
+   
+---     sudo apt update
+---     sudo apt install openjdk-11-jdk -y
+   
+
+2. Verify the Java installation:
+
+   
+ ---  java -version
+   
+
+ Step 2: Download and Install Hadoop
+
+1. Download Hadoop (replace `x.y.z` with the version you want, e.g., `3.3.1`):
+
+   
+   ---  wget https://downloads.apache.org/hadoop/common/hadoop-x.y.z/hadoop-x.y.z.tar.gz
+   
+
+2. Extract the downloaded tarball:
+
+   
+ ---    tar -xzvf hadoop-x.y.z.tar.gz
+   
+
+3. Move the Hadoop directory to `/usr/local/`:
+
+   
+  ---  sudo mv hadoop-x.y.z /usr/local/hadoop
+   
+
+ Step 3: Configure Hadoop Environment Variables
+
+1. Open the `~/.rc` file:
+
+   
+---     nano ~/.rc
+   
+
+2. Add the following lines at the end of the file:
+
+   
+---     export HADOOP_HOME=/usr/local/hadoop
+---     export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+---     export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+   
+
+3. Apply the changes:
+
+   
+---     source ~/.rc
+   
+
+ Step 4: Configure Hadoop
+
+1. Navigate to the Hadoop configuration directory:
+
+   
+---     cd /usr/local/hadoop/etc/hadoop
+   
+
+2. Edit the `core-site.xml` file:
+
+   
+---     nano core-site.xml
+   
+
+   Add the following configuration inside the `<configuration>` tags:
+
+---     xml
+   <property>
+       <name>fs.defaultFS</name>
+       <value>hdfs://localhost:9000</value>
+   </property>
+   
+
+3. Edit the `hdfs-site.xml` file:
+
+   
+---     nano hdfs-site.xml
+   
+
+   Add the following configuration inside the `<configuration>` tags:
+
+---     xml
+   <property>
+       <name>dfs.replication</name>
+       <value>1</value>
+   </property>
+   
+
+4. Edit the `mapred-site.xml` file (create if not exists):
+
+---     
+   nano mapred-site.xml
+   
+
+   Add the following configuration inside the `<configuration>` tags:
+
+---     xml
+   <property>
+       <name>mapreduce.framework.name</name>
+       <value>yarn</value>
+   </property>
+   
+
+5. Edit the `yarn-site.xml` file:
+
+   
+---     nano yarn-site.xml
+   
+
+   Add the following configuration inside the `<configuration>` tags:
+
+---     xml
+   <property>
+       <name>yarn.nodemanager.aux-services</name>
+       <value>mapreduce_shuffle</value>
+   </property>
+   <property>
+       <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+       <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+   </property>
+   
+
+ Step 5: Format HDFS
+
+1. Format the filesystem:
+
+   
+---     hdfs namenode -format
+   
+
+ Step 6: Start Hadoop and HDFS
+
+1. Start HDFS:
+
+   
+---     start-dfs.sh
+   
+
+2. Start YARN:
+
+   
+---     start-yarn.sh
+   
+
+3. Verify the Hadoop services:
+
+   You can check if the NameNode and DataNode are running:
+
+   
+---     jps
+   
+
+   You should see processes like `NameNode`, `DataNode`, `ResourceManager`, and `NodeManager`.
+
+ Step 7: Access Hadoop HDFS
+
+1. Access HDFS via the command line:
+
+   Create a directory in HDFS:
+
+   
+---     hdfs dfs -mkdir /user
+  ---   hdfs dfs -mkdir /user/yourusername
+   
+
+   Replace `yourusername` with your actual username.
+
+2. List the HDFS directories:
+
+   
+---     hdfs dfs -ls /
+   
+
+ Step 8: Stop Hadoop and HDFS
+
+1. To stop Hadoop services run:
+
+   
+---     stop-dfs.sh
+---     stop-yarn.sh
+   
+
+ Conclusion
+
+You have successfully installed and configured Hadoop and HDFS on your Ubuntu machine. You can now start using it for your projects. Make sure to modify configurations further based on your use case and setup (like distributed setups, etc.).
